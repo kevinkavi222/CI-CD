@@ -1,0 +1,36 @@
+name: Build and Test Primark Project
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout repository
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Step 2: Setup .NET environment
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 6.0 # Adjust to your .NET version
+
+      # Step 3: Restore dependencies
+      - name: Restore dependencies
+        run: dotnet restore "PrimarkProjectUsingConsoleApp/PrimarkProjectUsingConsoleApp.csproj"
+
+      # Step 4: Build the project
+      - name: Build
+        run: dotnet build "PrimarkProjectUsingConsoleApp/PrimarkProjectUsingConsoleApp.csproj" --no-restore --configuration Release
+
+      # Step 5: Run tests (if applicable)
+      - name: Test
+        run: dotnet test "PrimarkProjectUsingConsoleApp/PrimarkProjectUsingConsoleApp.csproj" --no-build --verbosity normal
