@@ -14,32 +14,42 @@ jobs:
     runs-on: windows-latest
 
     steps:
+    # Step 1: Checkout the code
     - name: Checkout Code
       uses: actions/checkout@v3
 
-    - name: Debug Filesystem
-      run: dir /s
+    # Step 2: Debug Current Directory
+    - name: Print Working Directory
+      run: pwd
 
+    - name: List Current Directory Contents
+      run: dir
+
+    # Step 3: Setup .NET environment
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:
         dotnet-version: 6.0
 
+    # Step 4: Restore Dependencies
     - name: Restore Dependencies
       working-directory: ./TestProjectXunit4CICDAndYAML
       run: dotnet restore
 
+    # Step 5: Build the Project
     - name: Build Project
       working-directory: ./TestProjectXunit4CICDAndYAML
       run: dotnet build --no-restore --configuration Debug
 
+    # Step 6: Run Tests
     - name: Run Tests
       working-directory: ./TestProjectXunit4CICDAndYAML
       run: dotnet test --no-build --configuration Debug --logger:"trx;LogFileName=TestResults.trx"
 
+    # Step 7: Publish Test Results
     - name: Publish Test Results
       if: always()
       uses: actions/upload-artifact@v3
       with:
         name: test-results
-        path: './TestProjectXunit4CICDAndYAML/TestResults/*.trx'
+        path: '**/TestResults.trx'
