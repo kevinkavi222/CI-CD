@@ -27,7 +27,8 @@ jobs:
     # Step 3: Navigate to the project directory
     - name: Change Directory
       working-directory: ./TestProjectXunit4CICDAndYAML
-      run: pwd  # Optional, to confirm the working directory
+      run: echo "In the correct directory"
+
 
     # Step 4: Restore dependencies
     - name: Restore Dependencies
