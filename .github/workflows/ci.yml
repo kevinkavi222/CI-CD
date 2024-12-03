@@ -32,11 +32,13 @@ jobs:
 
     # Step 4: Build the project
     - name: Build Project
-      run: dotnet build --no-restore --configuration Debug
+      run: dotnet build --configuration Debug
 
     # Step 5: Run Tests
     - name: Run Tests
       run: dotnet test --no-build --configuration Debug --logger:"trx;LogFileName=TestResults.trx"
+    - name: Debug Files and Directories
+      run: dir /s
       env:
         DOTNET_CLI_TELEMETRY_OPTOUT: 1
 
