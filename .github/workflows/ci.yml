@@ -1,22 +1,20 @@
 name: .NET Continuous Integration
 
 on:
-  # Run on code pushes and pull requests
   push:
     branches:
       - main
   pull_request:
     branches:
       - main
-  # Allow manual triggering of the workflow
   workflow_dispatch:
 
 jobs:
   build-and-test:
-    runs-on: windows-latest  # Use a Windows environment for .NET projects
+    runs-on: windows-latest
 
     steps:
-    # Step 1: Check out the repository
+    # Step 1: Checkout the code
     - name: Checkout Code
       uses: actions/checkout@v3
 
@@ -24,36 +22,29 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: 6.0  # Match the project's target framework
+        dotnet-version: 6.0
 
-    # Step 3: Restore dependencies
+    # Step 3: Navigate to the project directory
+    - name: Change Directory
+      working-directory: ./TestProjectXunit4CICDAndYAML
+      run: pwd  # Optional, to confirm the working directory
+
+    # Step 4: Restore dependencies
     - name: Restore Dependencies
       run: dotnet restore
 
-    # Step 4: Build the project
+    # Step 5: Build the project
     - name: Build Project
-      run: dotnet build --configuration Debug
+      run: dotnet build --no-restore --configuration Debug
 
-    # Step 5: Run Tests
+    # Step 6: Run tests
     - name: Run Tests
       run: dotnet test --no-build --configuration Debug --logger:"trx;LogFileName=TestResults.trx"
-    - name: Debug Files and Directories
-      run: dir /s
-      env:
-        DOTNET_CLI_TELEMETRY_OPTOUT: 1
 
-    # Step 6: Publish Test Results
+    # Step 7: Publish test results
     - name: Publish Test Results
       if: always()
       uses: actions/upload-artifact@v3
       with:
         name: test-results
         path: '**/TestResults.trx'
-
-    # Step 7: Upload Code Coverage Report (optional)
-    - name: Upload Coverage Report
-      if: success()
-      uses: actions/upload-artifact@v3
-      with:
-        name: coverage-report
-        path: '**/coverage.cobertura.xml'
